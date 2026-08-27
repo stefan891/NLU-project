@@ -50,7 +50,7 @@ class ExperimentConfig:
     log_artifact: bool = True  # upload best checkpoint as a wandb artifact
 
 
-def read_file(path, eos_token="<eos>"):
+def read_file(path, eos_token="<|endoftext|>"):
     output = []
     with open(path, "r") as f:
         for line in f.readlines():
