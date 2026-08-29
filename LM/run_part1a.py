@@ -164,24 +164,23 @@ def main():
     parser.add_argument("--resume-from", type=str, default=None,                   
                       help="Path to a checkpoint .pt whose config becomes the newbase.")
     args = parser.parse_args()
-    if args.resume_from:
-      ckpt = torch.load(args.resume_from, map_location="cpu")                    
-      cfg_dict = ckpt["config"]
-      cfg_dict["optim"] = AdamW  # asdict stripped the class                     
-      cfg_dict["name"] = "resume_base"                                           
-      base = ExperimentConfig(**cfg_dict)
-      base_ppl = float(ckpt["best_dev_ppl"])                                     
-      print(f"Resumed from {args.resume_from}  (dev PPL={base_ppl:.2f})")
-    else:                                                                          
-      base, base_ppl = run_baseline(device)
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Device: {device}")
 
-    base, base_ppl = run_baseline(device)
-    print(f"Baseline dev PPL: {base_ppl:.2f}")
+    if args.resume_from:
+        ckpt = torch.load(args.resume_from, map_location="cpu")
+        cfg_dict = ckpt["config"]
+        cfg_dict["optim"] = AdamW  # asdict stripped the class
+        cfg_dict["name"] = "resume_base"
+        base = ExperimentConfig(**cfg_dict)
+        base_ppl = float(ckpt["best_dev_ppl"])
+        print(f"Resumed from {args.resume_from}  (dev PPL={base_ppl:.2f})")
+    else:
+        base, base_ppl = run_baseline(device)
+        print(f"Baseline dev PPL: {base_ppl:.2f}")
 
     step_indices = args.only if args.only is not None else range(len(STEPS))
 
