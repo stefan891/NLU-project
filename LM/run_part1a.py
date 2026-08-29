@@ -24,6 +24,7 @@ import torch
 
 from main import run_experiment
 from utils import ExperimentConfig
+from torch.optim import AdamW
 
 
 Variant = Callable[[ExperimentConfig], list[ExperimentConfig]]
@@ -70,7 +71,7 @@ def ff_dim_search(base: ExperimentConfig) -> list[ExperimentConfig]:
 def dropout_embedding_search(base: ExperimentConfig) -> list[ExperimentConfig]:
     return [
         replace(base, name=f"step2_dropout_emb={p}", dropout_embedding=p)
-        for p in [0.1, 0.2, 0.3]
+        for p in [0.2, 0.3]
     ]
 
 
@@ -160,7 +161,19 @@ def main():
         help="Run only the given step indices (0-based). Default: all steps.",
     )
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument("--resume-from", type=str, default=None,                   
+                      help="Path to a checkpoint .pt whose config becomes the newbase.")
     args = parser.parse_args()
+    if args.resume_from:
+      ckpt = torch.load(args.resume_from, map_location="cpu")                    
+      cfg_dict = ckpt["config"]
+      cfg_dict["optim"] = AdamW  # asdict stripped the class                     
+      cfg_dict["name"] = "resume_base"                                           
+      base = ExperimentConfig(**cfg_dict)
+      base_ppl = float(ckpt["best_dev_ppl"])                                     
+      print(f"Resumed from {args.resume_from}  (dev PPL={base_ppl:.2f})")
+    else:                                                                          
+      base, base_ppl = run_baseline(device)
 
     torch.manual_seed(args.seed)
     np.random.seed(args.seed)
