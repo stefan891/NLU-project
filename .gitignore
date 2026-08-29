@@ -1,2 +1,5 @@
 .vscode
 .gitignore
+__pycache__
+wandb
+bin
