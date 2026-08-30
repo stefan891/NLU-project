@@ -71,28 +71,28 @@ def ff_dim_search(base: ExperimentConfig) -> list[ExperimentConfig]:
 def dropout_embedding_search(base: ExperimentConfig) -> list[ExperimentConfig]:
     return [
         replace(base, name=f"step2_dropout_emb={p}", dropout_embedding=p)
-        for p in [0.2, 0.3]
+        for p in [0.2]
     ]
 
 
 def dropout_attn_search(base: ExperimentConfig) -> list[ExperimentConfig]:
     return [
         replace(base, name=f"step2_dropout_attn={p}", dropout_attn=p)
-        for p in [0.1, 0.2]
+        for p in [0.1]
     ]
 
 
 def dropout_out_proj_search(base: ExperimentConfig) -> list[ExperimentConfig]:
     return [
         replace(base, name=f"step2_dropout_out_proj={p}", dropout_out_proj=p)
-        for p in [0.1, 0.2]
+        for p in [0.1]
     ]
 
 
 def dropout_ff_search(base: ExperimentConfig) -> list[ExperimentConfig]:
     return [
         replace(base, name=f"step2_dropout_ff={p}", dropout_ff=p)
-        for p in [0.1, 0.2]
+        for p in [0.1]
     ]
 
 
